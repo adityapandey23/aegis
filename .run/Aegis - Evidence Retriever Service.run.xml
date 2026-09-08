@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Aegis - Evidence Retriever Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="evidence-retriever-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.evidence_retriever_service.EvidenceRetrieverService" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

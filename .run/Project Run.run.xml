@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Project Run" type="CompoundRunConfigurationType">
+    <toRun name="Aegis - Alert Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Aegis - Analysis Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Aegis - Correlation Service " type="SpringBootApplicationConfigurationType" />
+    <toRun name="Aegis - Evidence Retriever Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Aegis - Incident Service" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
