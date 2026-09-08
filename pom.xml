@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project  xmlns="http://maven.apache.org/POM/4.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+            http://maven.apache.org/POM/4.0.0
+            https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.example.aegis</groupId>
+    <artifactId>aegis</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <name>aegis</name>
+    <description>Distributed incident managment platform</description>
+
+    <properties>
+        <java.version>25</java.version>
+    </properties>
+
+    <modules>
+        <!-- libs -->
+        <module>libs/event-contracts</module>
+        <module>libs/common-observability</module>
+        <module>libs/test-support</module>
+
+        <!-- services -->
+        <module>services/alert-service</module>
+        <module>services/analysis-service</module>
+        <module>services/correlation-service</module>
+        <module>services/evidence-retriever-service</module>
+        <module>services/incident-service</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Shared dependency will go here -->
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <!-- Shared plugins will go here -->
+        </plugins>
+    </build>
+
+</project>
