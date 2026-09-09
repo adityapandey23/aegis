@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class CorrelationService {
+public class CorrelationServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CorrelationService.class, args);
+        SpringApplication.run(CorrelationServiceApplication.class, args);
     }
 }

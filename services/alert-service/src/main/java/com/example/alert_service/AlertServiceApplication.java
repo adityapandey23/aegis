@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class AlertService {
+public class AlertServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AlertService.class, args);
+        SpringApplication.run(AlertServiceApplication.class, args);
     }
 }

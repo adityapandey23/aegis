@@ -2,7 +2,7 @@
   <configuration default="false" name="Aegis - Analysis Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/.sdkman/candidates/java/25-tem" />
     <module name="analysis-service" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.analysis_service.AnalysisService" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.analysis_service.AnalysisServiceApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
