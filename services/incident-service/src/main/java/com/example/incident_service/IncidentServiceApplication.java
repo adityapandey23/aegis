@@ -7,7 +7,7 @@ import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class IncidentServiceApplication {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(IncidentServiceApplication.class, args);
     }
 }

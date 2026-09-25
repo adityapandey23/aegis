@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="correlation-service" />
+        <module name="analysis-service" />
+        <module name="test-support" />
+        <module name="alert-service" />
+        <module name="event-contracts" />
+        <module name="evidence-retriever-service" />
+        <module name="common-observability" />
+        <module name="incident-service" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="alert-service" options="-parameters" />
+      <module name="analysis-service" options="-parameters" />
+      <module name="common-observability" options="-parameters" />
+      <module name="correlation-service" options="-parameters" />
+      <module name="event-contracts" options="-parameters" />
+      <module name="evidence-retriever-service" options="-parameters" />
+      <module name="incident-service" options="-parameters" />
+      <module name="test-support" options="-parameters" />
+    </option>
+  </component>
+</project>
