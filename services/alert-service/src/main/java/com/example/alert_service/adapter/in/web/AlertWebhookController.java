@@ -1,51 +1,39 @@
 package com.example.alert_service.adapter.in.web;
 
-import org.springframework.beans.factory.annotation.Value;
+
+import com.example.alert_service.application.port.in.ReceiveRawAlert;
+import com.example.alert_service.application.service.ReceiveAlertService;
+import com.example.alert_service.domain.exception.AlertDeliveryUnconfirmedException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.KafkaException;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 @RestController
 @RequestMapping("/v1/webhook")
 @Profile("ingestor")
 public class AlertWebhookController {
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final String topic;
+    private final ReceiveRawAlert receiveRawAlert;
 
-    public AlertWebhookController(
-            KafkaTemplate<String, String> kafkaTemplate,
-            @Value("${alerts.kafka.raw-topic}") String topic) {
-        this.kafkaTemplate = kafkaTemplate;
-        this.topic = topic;
+    public AlertWebhookController(ReceiveRawAlert receiveRawAlert) {
+        this.receiveRawAlert = receiveRawAlert;
     }
 
     @PostMapping("/alert")
     public ResponseEntity<String> receive(@RequestBody JsonNode payload) {
-        // This needs to get out of here, and we should use an PORT
+        // TODO: Add a logger method, also add a global handler
         try {
-            kafkaTemplate.send(topic, payload.toString()).get(5, TimeUnit.SECONDS);
+            receiveRawAlert.receive(payload.toString());
+            // Change this to return JSON instead of raw string
             return ResponseEntity
                     .accepted()
                     .body("Alert Accepted");
-        }
-        catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
-            return ResponseEntity
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Delivery could not be confirmed");
-        }
-        catch (ExecutionException | TimeoutException | KafkaException exception) {
+        } catch (AlertDeliveryUnconfirmedException exception) {
+            // Same Here
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
                     .body("Delivery could not be confirmed");
