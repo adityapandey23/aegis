@@ -2,7 +2,7 @@ package com.example.alert_service.application.service;
 
 import com.example.alert_service.application.port.in.ProcessRawAlert;
 import com.example.alert_service.application.port.in.TransformRawAlert;
-import com.example.alert_service.application.port.out.AlertOutboxEvent;
+import com.example.alert_service.application.port.out.OutboxEventRepository;
 import com.example.alert_service.application.port.out.AlertRepository;
 import com.example.alert_service.domain.model.Alert;
 import com.example.alert_service.domain.model.ProcessedEvent;
@@ -12,16 +12,16 @@ import java.util.UUID;
 
 public class ProcessAlertService implements ProcessRawAlert {
     private final AlertRepository alertRepository;
-    private final AlertOutboxEvent alertOutboxEvent;
+    private final OutboxEventRepository outboxEventRepository;
     private final TransformRawAlert transformRawAlert;
 
     public ProcessAlertService(
             AlertRepository alertRepository,
-            AlertOutboxEvent alertOutboxEvent,
+            OutboxEventRepository outboxEventRepository,
             TransformRawAlert transformRawAlert
     ) {
         this.alertRepository = alertRepository;
-        this.alertOutboxEvent = alertOutboxEvent;
+        this.outboxEventRepository = outboxEventRepository;
         this.transformRawAlert = transformRawAlert;
     }
 
@@ -32,7 +32,7 @@ public class ProcessAlertService implements ProcessRawAlert {
 
         if(!alertRepository.insertIfAbsent(alert)) return;
 
-        alertOutboxEvent.append(new ProcessedEvent(
+        outboxEventRepository.append(new ProcessedEvent(
                 UUID.randomUUID(),
                 alert
         ));

@@ -18,18 +18,21 @@ public class KafkaMessagePublisher {
         this.properties = properties;
     }
 
-    void publish(String topic, String payload) {
+    public void publish(String topic, String messageKey, String payload) {
         int attempt = 0;
 
         while (true) {
             try {
-                kafkaTemplate.send(topic, payload)
-                        .get(
-                                properties.getPublishTimeoutMs(),
-                                TimeUnit.MILLISECONDS
-                        );
+                var result = (messageKey != null)
+                        ? kafkaTemplate.send(topic, messageKey, payload)
+                        : kafkaTemplate.send(topic, payload);
 
-                return; // Successfully confirmed
+                result.get(
+                        properties.getPublishTimeoutMs(),
+                        TimeUnit.MILLISECONDS
+                );
+
+                return;
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
                 throw new KafkaMessagePublishException(

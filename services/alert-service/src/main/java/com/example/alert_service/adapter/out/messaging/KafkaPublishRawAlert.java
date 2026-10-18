@@ -24,6 +24,6 @@ public class KafkaPublishRawAlert implements PublishRawAlert {
 
     @Override
     public void publish(String rawAlert) {
-        // TODO: Implement
+        kafkaMessagePublisher.publish(topic, null, rawAlert);
     }
 }

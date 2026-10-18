@@ -1,14 +1,18 @@
 package com.example.alert_service.configuration;
 
 import com.example.alert_service.adapter.in.messaging.mapper.*;
-import com.example.alert_service.adapter.out.persistance.JdbcAlertOutboxEvent;
+import com.example.alert_service.adapter.out.messaging.KafkaPublishOutboxAlert;
+import com.example.alert_service.adapter.out.persistance.JdbcOutboxEventRepository;
 import com.example.alert_service.adapter.out.persistance.JdbcAlertRepository;
 import com.example.alert_service.application.port.in.ProcessRawAlert;
 import com.example.alert_service.application.port.in.TransformRawAlert;
-import com.example.alert_service.application.port.out.AlertOutboxEvent;
+import com.example.alert_service.application.port.out.OutboxEventRepository;
 import com.example.alert_service.application.port.out.AlertRepository;
+import com.example.alert_service.application.port.out.PublishOutboxAlert;
 import com.example.alert_service.application.service.ProcessAlertService;
 import com.example.alert_service.application.service.TransformAlertService;
+import com.example.kafka_starter.KafkaMessagePublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,6 +24,7 @@ import java.util.List;
 @Configuration
 @Profile("processor")
 public class AlertProcessorConfiguration {
+    //----------------Alert Mapper----------------
     @Bean("datadog")
     SourceAlertMapper datadogAlertMapper() {
         return new DatadogAlertMapper();
@@ -36,24 +41,32 @@ public class AlertProcessorConfiguration {
     }
 
     @Bean
-    AlertRepository alertRepository(JdbcTemplate jdbcTemplate) {
-        return new JdbcAlertRepository(jdbcTemplate);
-    }
-
-    AlertOutboxEvent alertEventOutbox(
-            ObjectMapper objectMapper,
-            JdbcTemplate jdbcTemplate
-    ) {
-        return new JdbcAlertOutboxEvent(objectMapper, jdbcTemplate);
-    }
-
-    @Bean
     AlertMapperFactory alertMapperFactory(
             List<SourceAlertMapper> mappers
     ) {
         return new AlertMapperFactory(mappers);
     }
 
+    //----------------Repositories----------------
+    @Bean
+    AlertRepository alertRepository(
+            JdbcTemplate jdbcTemplate
+    ) {
+        return new JdbcAlertRepository(jdbcTemplate);
+    }
+
+    @Bean
+    OutboxEventRepository alertEventOutbox(
+            ObjectMapper objectMapper,
+            JdbcTemplate jdbcTemplate
+    ) {
+        return new JdbcOutboxEventRepository(
+                objectMapper,
+                jdbcTemplate
+        );
+    }
+
+    //----------------Services----------------
     @Bean
     TransformRawAlert transformRawAlert(
             ObjectMapper objectMapper,
@@ -68,13 +81,26 @@ public class AlertProcessorConfiguration {
     @Bean
     ProcessRawAlert processRawAlert(
             AlertRepository alertRepository,
-            AlertOutboxEvent alertOutboxEvent,
+            OutboxEventRepository outboxEventRepository,
             TransformRawAlert transformRawAlert
     ) {
         return new ProcessAlertService(
                 alertRepository,
-                alertOutboxEvent,
+                outboxEventRepository,
                 transformRawAlert
+        );
+    }
+
+    @Bean
+    PublishOutboxAlert publishOutboxAlert(
+            OutboxEventRepository outboxEventRepository,
+            KafkaMessagePublisher kafkaMessagePublisher,
+            @Value("${alerts.kafka.outbox-event-topic}") String topic
+    ) {
+        return new KafkaPublishOutboxAlert(
+                outboxEventRepository,
+                kafkaMessagePublisher,
+                topic
         );
     }
 }
