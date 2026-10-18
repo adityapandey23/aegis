@@ -18,12 +18,6 @@ public class PrometheusAlertMapper implements SourceAlertMapper {
 
     @Override
     public Alert map(JsonNode payload) {
-        return new Alert(
-                UUID.randomUUID(),
-                this.source(),
-                "test-source-event-id",
-                Severity.WARNING,
-                Instant.now()
-        );
+        return null;
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/v1/webhook")
 @Profile("ingestor")
@@ -24,19 +26,16 @@ public class AlertWebhookController {
     }
 
     @PostMapping("/alert")
-    public ResponseEntity<String> receive(@RequestBody JsonNode payload) {
-        // TODO: Add a logger method, also add a global handler
+    public ResponseEntity<Map<String, String>> receive(@RequestBody JsonNode payload) {
         try {
             receiveRawAlert.receive(payload.toString());
-            // Change this to return JSON instead of raw string
             return ResponseEntity
                     .accepted()
-                    .body("Alert Accepted");
+                    .body(Map.of("message", "alert accepted"));
         } catch (AlertDeliveryUnconfirmedException exception) {
-            // Same Here
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Delivery could not be confirmed");
+                    .body(Map.of("error", "delivery could not be confirmed"));
         }
     }
 }

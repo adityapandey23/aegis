@@ -7,6 +7,7 @@ public record Alert(
     UUID id,
     String source,
     String sourceEventId,
+    String resource,
     Severity severity,
     Instant occurredAt
 ) {}

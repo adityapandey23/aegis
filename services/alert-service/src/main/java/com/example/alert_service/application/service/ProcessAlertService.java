@@ -2,28 +2,40 @@ package com.example.alert_service.application.service;
 
 import com.example.alert_service.application.port.in.ProcessRawAlert;
 import com.example.alert_service.application.port.in.TransformRawAlert;
+import com.example.alert_service.application.port.out.AlertOutboxEvent;
+import com.example.alert_service.application.port.out.AlertRepository;
 import com.example.alert_service.domain.model.Alert;
+import com.example.alert_service.domain.model.ProcessedEvent;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 public class ProcessAlertService implements ProcessRawAlert {
+    private final AlertRepository alertRepository;
+    private final AlertOutboxEvent alertOutboxEvent;
     private final TransformRawAlert transformRawAlert;
 
-    public ProcessAlertService(TransformRawAlert transformRawAlert) {
+    public ProcessAlertService(
+            AlertRepository alertRepository,
+            AlertOutboxEvent alertOutboxEvent,
+            TransformRawAlert transformRawAlert
+    ) {
+        this.alertRepository = alertRepository;
+        this.alertOutboxEvent = alertOutboxEvent;
         this.transformRawAlert = transformRawAlert;
     }
 
+    @Transactional
     @Override
     public void process(String rawAlert) {
-        // 1. Transform
         Alert alert = transformRawAlert.transform(rawAlert);
 
-        if(alert != null) {
-            System.out.println("Hey I am not null lol");
-            System.out.println(alert.toString());
-        }
+        if(!alertRepository.insertIfAbsent(alert)) return;
 
-        // 2. Persistance in DB
+        alertOutboxEvent.append(new ProcessedEvent(
+                UUID.randomUUID(),
+                alert
+        ));
 
-        // 3. Sending event to Kafka
     }
-
 }

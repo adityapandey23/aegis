@@ -12,6 +12,7 @@ public class AlertMapperFactory {
     private final Map<String, SourceAlertMapper> mapperMap;
 
     public AlertMapperFactory(List<SourceAlertMapper> mappers) {
+        // Wtf is this shit
         this.mapperMap = mappers.stream().collect(
                 Collectors.toUnmodifiableMap(
                         SourceAlertMapper::source,

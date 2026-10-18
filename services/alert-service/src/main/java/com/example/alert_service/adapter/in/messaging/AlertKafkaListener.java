@@ -1,14 +1,10 @@
 package com.example.alert_service.adapter.in.messaging;
 
-import com.example.alert_service.adapter.in.messaging.mapper.AlertMapperFactory;
-import com.example.alert_service.adapter.in.messaging.mapper.SourceAlertMapper;
 import com.example.alert_service.application.port.in.ProcessRawAlert;
-import com.example.alert_service.domain.model.Alert;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
+
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 @Component
 @Profile("processor")

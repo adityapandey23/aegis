@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   kafka:
-    image: apache/kafka:latest
+    image: apache/kafka:4.3.1
     container_name: kafka
     ports:
       - "9092:9092"
@@ -26,7 +24,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:latest
+    image: provectuslabs/kafka-ui:v0.7.2
     container_name: kafka-ui
     ports:
       - "8080:8080"
@@ -36,3 +34,19 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka:29092'
     depends_on:
       - kafka
+
+  postgres:
+    image: postgres:17
+    container_name: alert-service-db
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: alert_service
+      POSTGRES_USER: alert_app
+      POSTGRES_PASSWORD: local_dev_password
+    volumes:
+      - alert_postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/alert-service:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  alert_postgres_data:

@@ -13,6 +13,7 @@
         <module name="event-contracts" />
         <module name="evidence-retriever-service" />
         <module name="common-observability" />
+        <module name="kafka-starter" />
         <module name="incident-service" />
       </profile>
     </annotationProcessing>
@@ -26,6 +27,7 @@
       <module name="event-contracts" options="-parameters" />
       <module name="evidence-retriever-service" options="-parameters" />
       <module name="incident-service" options="-parameters" />
+      <module name="kafka-starter" options="-parameters" />
       <module name="test-support" options="-parameters" />
     </option>
   </component>
