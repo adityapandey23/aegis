@@ -1,0 +1,52 @@
+services:
+  kafka:
+    image: apache/kafka:4.3.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # Configure KRaft mode and roles
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:9093'
+
+      # Define listeners for inside and outside the Docker network
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+
+      # Required cluster configurations
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+
+      # Single-broker configuration for consumer offsets
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: 'local-cluster'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka:29092'
+    depends_on:
+      - kafka
+
+  postgres:
+    image: postgres:17
+    container_name: alert-service-db
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: alert_service
+      POSTGRES_USER: alert_app
+      POSTGRES_PASSWORD: local_dev_password
+    volumes:
+      - alert_postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/alert-service:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  alert_postgres_data:

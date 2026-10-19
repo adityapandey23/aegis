@@ -1,0 +1,52 @@
+package com.example.alert_service.adapter.in.messaging.mapper;
+
+import com.example.alert_service.domain.model.Alert;
+import com.example.alert_service.domain.model.Severity;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+public class NewRelicAlertMapper implements SourceAlertMapper {
+    @Override
+    public String source() {
+        return "new-relic";
+    }
+
+    @Override
+    public List<Alert> map(JsonNode payload) {
+        String sourceEventId = payload
+                .required("source_event_id")
+                .asText();
+
+        String resource = payload
+                .required("resource")
+                .asText();
+
+        Severity severity = switch (
+                payload.required("severity")
+                        .asText()
+                        .toUpperCase()
+                ) {
+            case "CRITICAL" -> Severity.CRITICAL;
+            case "HIGH", "WARNING" -> Severity.WARNING;
+            default -> Severity.INFO;
+        };
+
+        Instant occurredAt = Instant.parse(
+                payload.required("occurred_at")
+                        .asText()
+        );
+
+        return List.of(new Alert(
+                UUID.randomUUID(),
+                source(),
+                sourceEventId,
+                resource,
+                severity,
+                occurredAt
+        ));
+    }
+}
