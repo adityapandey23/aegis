@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
-
-// TODO: Implement
 
 public class NewRelicAlertMapper implements SourceAlertMapper {
     @Override
@@ -17,7 +16,37 @@ public class NewRelicAlertMapper implements SourceAlertMapper {
     }
 
     @Override
-    public Alert map(JsonNode payload) {
-        return null;
+    public List<Alert> map(JsonNode payload) {
+        String sourceEventId = payload
+                .required("source_event_id")
+                .asText();
+
+        String resource = payload
+                .required("resource")
+                .asText();
+
+        Severity severity = switch (
+                payload.required("severity")
+                        .asText()
+                        .toUpperCase()
+                ) {
+            case "CRITICAL" -> Severity.CRITICAL;
+            case "HIGH", "WARNING" -> Severity.WARNING;
+            default -> Severity.INFO;
+        };
+
+        Instant occurredAt = Instant.parse(
+                payload.required("occurred_at")
+                        .asText()
+        );
+
+        return List.of(new Alert(
+                UUID.randomUUID(),
+                source(),
+                sourceEventId,
+                resource,
+                severity,
+                occurredAt
+        ));
     }
 }

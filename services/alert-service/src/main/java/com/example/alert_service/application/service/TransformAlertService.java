@@ -6,6 +6,8 @@ import com.example.alert_service.domain.model.Alert;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 public class TransformAlertService implements TransformRawAlert {
     private final ObjectMapper objectMapper;
     private final AlertMapperFactory alertMapperFactory;
@@ -19,7 +21,7 @@ public class TransformAlertService implements TransformRawAlert {
     }
 
     @Override
-    public Alert transform(String rawAlert) {
+    public List<Alert> transform(String rawAlert) {
         JsonNode envelope = objectMapper.readTree(rawAlert);
 
         // Here we have to somewhat find a way to figure out it's from which source

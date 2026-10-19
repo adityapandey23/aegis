@@ -8,6 +8,7 @@ import com.example.alert_service.domain.model.Alert;
 import com.example.alert_service.domain.model.ProcessedEvent;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProcessAlertService implements ProcessRawAlert {
@@ -28,14 +29,15 @@ public class ProcessAlertService implements ProcessRawAlert {
     @Transactional
     @Override
     public void process(String rawAlert) {
-        Alert alert = transformRawAlert.transform(rawAlert);
+        List<Alert> alerts = transformRawAlert.transform(rawAlert);
 
-        if(!alertRepository.insertIfAbsent(alert)) return;
+        for (Alert alert : alerts) {
+            if(!alertRepository.insertIfAbsent(alert)) continue;
 
-        outboxEventRepository.append(new ProcessedEvent(
-                UUID.randomUUID(),
-                alert
-        ));
-
+            outboxEventRepository.append(new ProcessedEvent(
+                    UUID.randomUUID(),
+                    alert
+            ));
+        }
     }
 }

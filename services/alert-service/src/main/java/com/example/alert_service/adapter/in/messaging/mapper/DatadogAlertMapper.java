@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
-
-// TODO: Implement
 
 public class DatadogAlertMapper implements SourceAlertMapper {
     @Override
@@ -17,7 +16,33 @@ public class DatadogAlertMapper implements SourceAlertMapper {
     }
 
     @Override
-    public Alert map(JsonNode payload) {
-        return null;
+    public List<Alert> map(JsonNode payload) {
+        String sourceEventId = payload
+                .required("source_event_id")
+                .asText();
+
+        String resource = payload
+                .required("resource")
+                .asText();
+
+        Severity severity = Severity.valueOf(
+                payload.required("severity")
+                        .asText()
+                        .toUpperCase()
+        );
+
+        Instant occurredAt = Instant.ofEpochSecond(
+                payload.required("occurred_at")
+                        .asLong()
+        );
+
+        return List.of(new Alert(
+                UUID.randomUUID(),
+                source(),
+                sourceEventId,
+                resource,
+                severity,
+                occurredAt
+        ));
     }
 }

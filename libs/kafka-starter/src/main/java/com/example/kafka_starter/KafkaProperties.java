@@ -1,15 +1,28 @@
 package com.example.kafka_starter;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
-@ConfigurationProperties(prefix = "platform.kafka")
 public class KafkaProperties {
     private long publishTimeoutMs;
 
     private long retryIntervalMs;
 
     private long maxRetries;
+
+    public KafkaProperties() {
+        this.publishTimeoutMs = 5000;
+        this.retryIntervalMs = 1000;
+        this.maxRetries = 3;
+    }
+
+    public KafkaProperties(
+            long publishTimeoutMs,
+            long retryIntervalMs,
+            long maxRetries
+    ) {
+        this.publishTimeoutMs = publishTimeoutMs;
+        this.retryIntervalMs = retryIntervalMs;
+        this.maxRetries = maxRetries;
+    }
 
     public long getPublishTimeoutMs() {
         return publishTimeoutMs;
